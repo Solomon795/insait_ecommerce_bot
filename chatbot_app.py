@@ -10,7 +10,6 @@ api_key = os.getenv('OPENAI_API_KEY')
 app = Flask(__name__)
 
 app.secret_key = 'solomon_insait'
-# openai.api_key = 'sk-proj-GIgdojeDb0v81JFVk6RST3BlbkFJtAtcCLVbUhcBKz4ja8iD'
 
 client = openai.OpenAI(api_key=openai.api_key)
 
