@@ -37,7 +37,8 @@ def is_order_status_query(user_text):
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
+    return render_template("index.html", message=welcome_message)
 
 @app.route("/get")
 def get_bot_response():
