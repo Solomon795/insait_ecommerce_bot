@@ -1,11 +1,16 @@
 from flask import Flask, render_template, request, session
 import openai
 import csv
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv('OPENAI_API_KEY')
 
 app = Flask(__name__)
 
 app.secret_key = 'solomon_insait'
-openai.api_key = 'sk-proj-GIgdojeDb0v81JFVk6RST3BlbkFJtAtcCLVbUhcBKz4ja8iD'
+# openai.api_key = 'sk-proj-GIgdojeDb0v81JFVk6RST3BlbkFJtAtcCLVbUhcBKz4ja8iD'
 
 client = openai.OpenAI(api_key=openai.api_key)
 
