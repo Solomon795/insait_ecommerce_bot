@@ -17,6 +17,24 @@ client = openai.OpenAI(api_key=api_key)
 # Regular expression to validate the order ID format XXX-XXXXXXX (all digits)
 ORDER_ID_PATTERN = re.compile(r'^\d{3}-\d{7}$')
 
+
+def common_query(user_text):
+    # Include the bot prompt in the conversation
+    conversation = [
+        {"role": "system", "content": bot_prompt},
+        {"role": "user", "content": user_text}
+    ]
+
+    response = client.chat.completions.create(
+        messages=conversation,
+        model="gpt-3.5-turbo"
+    )
+
+    # Extract the response text from the OpenAI API response
+    response_text = response.choices[0].message.content.strip()
+
+    return response_text
+
 def get_order_status(order_id):
     with open('ecommerce_orders.csv', mode='r') as file:
         csv_reader = csv.DictReader(file)
@@ -75,6 +93,25 @@ def save_contact_info(full_name, email, phone):
         if not file_exists:
             writer.writeheader()
         writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
+
+# def is_irrelevant_response(user_text):
+#     """Function to classify if the user response is negative or wishes to change the topic."""
+#     response = client.chat.completions.create(
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": "Is this response indicating a negative sentiment or a wish to change the topic? Answer with 'yes' or 'no'."
+#             },
+#             {
+#                 "role": "user",
+#                 "content": f"{user_text}\n
+#             }
+#         ],
+#         model="gpt-3.5-turbo"
+#     )
+#     intent = response.choices[0].message.content.strip().lower()
+#     return intent == 'yes'
+
 
 # Single prompt encapsulating the bot's capabilities
 bot_prompt = """
@@ -136,20 +173,7 @@ def get_bot_response():
             response_text = "Could you please provide your order ID in following format: XXX-XXXXXXX (all digits)?"
             session['order_status'] = True  # Set the flag to expect an order ID next
         else:
-            # Include the bot prompt in the conversation
-            conversation = [
-                {"role": "system", "content": bot_prompt},
-                {"role": "user", "content": user_text}
-            ]
-
-            response = client.chat.completions.create(
-                messages=conversation,
-                model="gpt-3.5-turbo"
-            )
-
-            # Extract the response text from the OpenAI API response
-            response_text = response.choices[0].message.content.strip()
-
+            response_text = common_query(user_text)
     return response_text
 
 if __name__ == "__main__":
