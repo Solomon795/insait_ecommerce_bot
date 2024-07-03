@@ -39,6 +39,34 @@ def is_order_status_query(user_text):
     intent = response.choices[0].message.content.strip().lower()
     return intent == 'yes'
 
+def is_switch_to_real_person_query(user_text):
+    """Function to classify if the user wants to switch to a real person."""
+    response = client.chat.completions.create(
+        messages=[
+            {
+                "role": "system",
+                "content": "Is this query asking to speak to human representative?Answer with 'yes' or 'no'."
+            },
+            {
+                "role": "user",
+                "content": user_text
+            }
+        ],
+        model="gpt-3.5-turbo"
+    )
+    intent = response.choices[0].message.content.strip().lower()
+    return intent == 'yes'
+
+def save_contact_info(full_name, email, phone):
+    """Save contact information to a CSV file."""
+    file_exists = os.path.isfile('contact_info.csv')
+    with open('contact_info.csv', mode='a', newline='') as file:
+        fieldnames = ['full_name', 'email', 'phone']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        if not file_exists:
+            writer.writeheader()
+        writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
+
 # Single prompt encapsulating the bot's capabilities
 bot_prompt = """
 You are an e-commerce support bot designed to handle customer queries about products, orders, and policies. You should understand and respond to inquiries regarding:
@@ -47,7 +75,9 @@ You are an e-commerce support bot designed to handle customer queries about prod
 2. Return Policies: Users might inquire about return policies and procedures using phrases like "What is your return policy?" or "Can I return items?"
 3. Product Information: Users might seek information about products using phrases like "Tell me about your products" or "What are your best-selling items?"
 
-Provide accurate responses and handle multi-turn conversations by asking clarifying questions when necessary. Ensure that the responses are clear, polite, helpful, and reflect the policies and information relevant to the e-commerce platform.
+Provide accurate responses and handle multi-turn conversations by asking clarifying questions when necessary. Ensure that the responses are clear, helpful, and reflect the policies and information relevant to the e-commerce platform.
+
+If the user wants to speak to a real person, ask for their full name, email, and phone number and save this information to a CSV file.
 """
 
 @app.route("/")
@@ -66,9 +96,29 @@ def get_bot_response():
         else:
             response_text = "Sorry, I couldn't find an order with that ID."
         session.pop('order_status', None)
+    elif 'contact_info' in session:
+        # Collect contact information
+        if 'full_name' not in session:
+            session['full_name'] = user_text
+            response_text = "Thank you. Please provide your email address."
+        elif 'email' not in session:
+            session['email'] = user_text
+            response_text = "Great. Finally, please provide your phone number."
+        else:
+            session['phone'] = user_text
+            save_contact_info(session['full_name'], session['email'], session['phone'])
+            response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
+            session.pop('contact_info', None)
+            session.pop('full_name', None)
+            session.pop('email', None)
+            session.pop('phone', None)
     else:
+        # Check if the user wants to switch to a real person
+        if is_switch_to_real_person_query(user_text):
+            response_text = "Sure, I can help you with that. Please provide your full name."
+            session['contact_info'] = True
         # Check if the user is asking about order status
-        if is_order_status_query(user_text):
+        elif is_order_status_query(user_text):
             response_text = "Could you please provide your order ID?"
             session['order_status'] = True  # Set the flag to expect an order ID next
         else:
