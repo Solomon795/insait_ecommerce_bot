@@ -3,6 +3,7 @@ import openai
 import csv
 import os
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
@@ -12,6 +13,9 @@ app = Flask(__name__)
 app.secret_key = 'solomon_insait'
 
 client = openai.OpenAI(api_key=api_key)
+
+# Regular expression to validate the order ID format XXX-XXXXXXX (all digits)
+ORDER_ID_PATTERN = re.compile(r'^\d{3}-\d{7}$')
 
 def get_order_status(order_id):
     with open('ecommerce_orders.csv', mode='r') as file:
@@ -27,17 +31,22 @@ def is_order_status_query(user_text):
         messages=[
             {
                 "role": "system",
-                "content": "Is this query anyhow related to asking about order status? Answer with 'yes' or 'no'"
+                "content": "You are an e-commerce support bot. Determine if the following query is related to checking the status of an order."
             },
             {
                 "role": "user",
                 "content": user_text
+            },
+            {
+                "role": "system",
+                "content": "Answer with 'yes' if it is related to checking order status, otherwise answer with 'no'."
             }
         ],
         model="gpt-3.5-turbo"
     )
     intent = response.choices[0].message.content.strip().lower()
     return intent == 'yes'
+
 
 def is_switch_to_real_person_query(user_text):
     """Function to classify if the user wants to switch to a real person."""
@@ -92,12 +101,15 @@ def get_bot_response():
     user_text = request.args.get('msg')
     if 'order_status' in session:
         order_id = user_text
-        order_status = get_order_status(order_id)
-        if order_status:
-            response_text = f"Your order status is: {order_status}."
+        if ORDER_ID_PATTERN.match(order_id):
+            order_status = get_order_status(order_id)
+            if order_status:
+                response_text = f"Your order status is: {order_status}."
+            else:
+                response_text = "Sorry, I couldn't find an order with that ID."
+            session.pop('order_status', None)
         else:
-            response_text = "Sorry, I couldn't find an order with that ID."
-        session.pop('order_status', None)
+            response_text = "The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID."
     elif 'contact_info' in session:
         # Collect contact information
         if 'full_name' not in session:
@@ -121,7 +133,7 @@ def get_bot_response():
             session['contact_info'] = True
         # Check if the user is asking about order status
         elif is_order_status_query(user_text):
-            response_text = "Could you please provide your order ID?"
+            response_text = "Could you please provide your order ID in following format: XXX-XXXXXXX (all digits)?"
             session['order_status'] = True  # Set the flag to expect an order ID next
         else:
             # Include the bot prompt in the conversation
