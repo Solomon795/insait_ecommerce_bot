@@ -27,7 +27,7 @@ def is_order_status_query(user_text):
         messages=[
             {
                 "role": "system",
-                "content": "Is this query asking about order status? Answer with 'yes' or 'no'"
+                "content": "Is this query anyhow related to asking about order status? Answer with 'yes' or 'no'"
             },
             {
                 "role": "user",
@@ -82,6 +82,8 @@ If the user wants to speak to a real person, ask for their full name, email, and
 
 @app.route("/")
 def index():
+    # Clear the session on page load
+    session.clear()
     welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
     return render_template("index.html", message=welcome_message)
 
