@@ -51,15 +51,12 @@ def is_order_status_query(user_text):
         messages=[
             {
                 "role": "system",
-                "content": "You are an e-commerce support bot. Determine if the following query is related to checking the status of an order."
+                "content": "You are an e-commerce support bot."
+                           "Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
             },
             {
                 "role": "user",
                 "content": user_text
-            },
-            {
-                "role": "system",
-                "content": "Answer with 'yes' if it is related to checking order status, otherwise answer with 'no'."
             }
         ],
         model="gpt-3.5-turbo"
@@ -105,14 +102,8 @@ def save_contact_info(full_name, email, phone):
 # Single prompt encapsulating the bot's capabilities
 bot_prompt = """
 You are an e-commerce support bot designed to handle customer queries about products, orders, and policies. You should understand and respond to inquiries regarding:
-
-1. Order Status: Users might ask about the status of their orders using phrases like "What is the status of my order?" or "Has my order shipped?"
-2. Return Policies: Users might inquire about return policies and procedures using phrases like "What is your return policy?" or "Can I return items?"
-3. Product Information: Users might seek information about products using phrases like "Tell me about your products" or "What are your best-selling items?"
-
 Provide accurate responses and handle multi-turn conversations by asking clarifying questions when necessary. Ensure that the responses are clear, helpful, and reflect the policies and information relevant to the e-commerce platform.
 
-If the user wants to speak to a real person, ask for their full name, email, and phone number and save this information to a CSV file.
 """
 
 
