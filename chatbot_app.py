@@ -35,6 +35,7 @@ def common_query(user_text):
 
     return response_text
 
+
 def get_order_status(order_id):
     with open('ecommerce_orders.csv', mode='r') as file:
         csv_reader = csv.DictReader(file)
@@ -42,6 +43,7 @@ def get_order_status(order_id):
             if row['order_id'] == order_id:
                 return row['status']
     return None
+
 
 def is_order_status_query(user_text):
     """Function to classify if the user text is asking about order status."""
@@ -72,7 +74,11 @@ def is_switch_to_real_person_query(user_text):
         messages=[
             {
                 "role": "system",
-                "content": "Is this query asking to speak to human representative?Answer with 'yes' or 'no'."
+                "content": """
+                You are an e-commerce support bot. Your task is to determine if the following query explicitly requests to speak to a human representative or customer support agent. 
+                Consider phrases that directly ask for human assistance, such as "I want to talk to a human" or "Can I speak to a real person?". 
+                General expressions of dissatisfaction or frustration should not be considered as requests to switch to a human unless they explicitly ask for it.
+                Answer with 'yes' if the query explicitly requests a human representative, otherwise answer with 'no'."""
             },
             {
                 "role": "user",
@@ -84,6 +90,7 @@ def is_switch_to_real_person_query(user_text):
     intent = response.choices[0].message.content.strip().lower()
     return intent == 'yes'
 
+
 def save_contact_info(full_name, email, phone):
     """Save contact information to a CSV file."""
     file_exists = os.path.isfile('contact_info.csv')
@@ -93,24 +100,6 @@ def save_contact_info(full_name, email, phone):
         if not file_exists:
             writer.writeheader()
         writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
-
-# def is_irrelevant_response(user_text):
-#     """Function to classify if the user response is negative or wishes to change the topic."""
-#     response = client.chat.completions.create(
-#         messages=[
-#             {
-#                 "role": "system",
-#                 "content": "Is this response indicating a negative sentiment or a wish to change the topic? Answer with 'yes' or 'no'."
-#             },
-#             {
-#                 "role": "user",
-#                 "content": f"{user_text}\n
-#             }
-#         ],
-#         model="gpt-3.5-turbo"
-#     )
-#     intent = response.choices[0].message.content.strip().lower()
-#     return intent == 'yes'
 
 
 # Single prompt encapsulating the bot's capabilities
@@ -126,6 +115,7 @@ Provide accurate responses and handle multi-turn conversations by asking clarify
 If the user wants to speak to a real person, ask for their full name, email, and phone number and save this information to a CSV file.
 """
 
+
 @app.route("/")
 def index():
     # Clear the session on page load
@@ -133,10 +123,13 @@ def index():
     welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
     return render_template("index.html", message=welcome_message)
 
+
 @app.route("/get")
 def get_bot_response():
     user_text = request.args.get('msg')
+
     if 'order_status' in session:
+        # Handle order status query
         order_id = user_text
         if ORDER_ID_PATTERN.match(order_id):
             order_status = get_order_status(order_id)
@@ -166,15 +159,17 @@ def get_bot_response():
     else:
         # Check if the user wants to switch to a real person
         if is_switch_to_real_person_query(user_text):
-            response_text = "Sure, I can help you with that. Please provide your full name."
+            response_text = "I understand your request for real person interaction. Could you please provide your full name first?"
             session['contact_info'] = True
         # Check if the user is asking about order status
         elif is_order_status_query(user_text):
-            response_text = "Could you please provide your order ID in following format: XXX-XXXXXXX (all digits)?"
+            response_text = "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?"
             session['order_status'] = True  # Set the flag to expect an order ID next
         else:
             response_text = common_query(user_text)
+
     return response_text
+
 
 if __name__ == "__main__":
     app.run(debug=True)
