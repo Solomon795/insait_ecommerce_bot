@@ -1,0 +1,6 @@
+user: Hey there who are yo
+assistant: Hello! I am an e-commerce support bot here to assist you with any questions you have about products, orders, or policies. How can I help you today?
+user: Are you sure you are
+assistant: I'm here and ready to assist you with any questions or concerns you may have regarding products, orders, or policies. How can I help you today?
+
+127.0.0.1 - - [05/Jul/2024 19:41:19] "GET /get?msg=Are%20you%20sure%20you%20are HTTP/1.1" 200 -

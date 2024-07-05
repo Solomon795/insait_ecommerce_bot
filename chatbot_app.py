@@ -4,6 +4,16 @@ import csv
 import os
 from dotenv import load_dotenv
 import re
+import logging
+# Configure logging
+logging.basicConfig(filename='conversation_history.log', level=logging.INFO, format='%(message)s')
+
+# Function to log conversation history
+def log_conversation_history(conversation_history):
+    with open('conversation_history.log', 'w') as file:
+        for entry in conversation_history:
+            file.write(f"{entry['role']}: {entry['content']}\n")
+        file.write("\n")
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
@@ -152,10 +162,13 @@ def index():
     welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
     return render_template("index.html", message=welcome_message)
 
-
+conversation = []
 @app.route("/get")
 def get_bot_response():
     user_text = request.args.get('msg')
+    global conversation
+    # Append user's message to the conversation
+    conversation.append({"role": "user", "content": user_text})
 
     if 'order_status' in session:
         response_text = handle_order_status(user_text)
@@ -170,6 +183,10 @@ def get_bot_response():
             session['order_status'] = True
         else:
             response_text = common_query(user_text)
+
+    # Append chatbot's response to the conversation
+    conversation.append({"role": "assistant", "content": response_text})
+    log_conversation_history(conversation)
 
     return response_text
 
