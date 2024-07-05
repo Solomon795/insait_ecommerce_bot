@@ -19,7 +19,6 @@ ORDER_ID_PATTERN = re.compile(r'^\d{3}-\d{7}$')
 
 
 def common_query(user_text):
-    # Include the bot prompt in the conversation
     conversation = [
         {"role": "system", "content": bot_prompt},
         {"role": "user", "content": user_text}
@@ -30,9 +29,7 @@ def common_query(user_text):
         model="gpt-3.5-turbo"
     )
 
-    # Extract the response text from the OpenAI API response
     response_text = response.choices[0].message.content.strip()
-
     return response_text
 
 
@@ -46,13 +43,11 @@ def get_order_status(order_id):
 
 
 def is_order_status_query(user_text):
-    """Function to classify if the user text is asking about order status."""
     response = client.chat.completions.create(
         messages=[
             {
                 "role": "system",
-                "content": "You are an e-commerce support bot."
-                           "Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
+                "content": "You are an e-commerce support bot. Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
             },
             {
                 "role": "user",
@@ -66,7 +61,6 @@ def is_order_status_query(user_text):
 
 
 def is_switch_to_real_person_query(user_text):
-    """Function to classify if the user wants to switch to a real person."""
     response = client.chat.completions.create(
         messages=[
             {
@@ -89,7 +83,6 @@ def is_switch_to_real_person_query(user_text):
 
 
 def save_contact_info(full_name, email, phone):
-    """Save contact information to a CSV file."""
     file_exists = os.path.isfile('contact_info.csv')
     with open('contact_info.csv', mode='a', newline='') as file:
         fieldnames = ['full_name', 'email', 'phone']
@@ -97,6 +90,38 @@ def save_contact_info(full_name, email, phone):
         if not file_exists:
             writer.writeheader()
         writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
+
+
+def handle_order_status(user_text):
+    order_id = user_text
+    if ORDER_ID_PATTERN.match(order_id):
+        order_status = get_order_status(order_id)
+        if order_status:
+            response_text = f"Your order status is: {order_status}."
+        else:
+            response_text = "Sorry, I couldn't find an order with that ID."
+        session.pop('order_status', None)
+    else:
+        response_text = "The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID."
+    return response_text
+
+
+def handle_contact_info(user_text):
+    if 'full_name' not in session:
+        session['full_name'] = user_text
+        response_text = "Thank you. Please provide your email address."
+    elif 'email' not in session:
+        session['email'] = user_text
+        response_text = "Great. Finally, please provide your phone number."
+    else:
+        session['phone'] = user_text
+        save_contact_info(session['full_name'], session['email'], session['phone'])
+        response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
+        session.pop('contact_info', None)
+        session.pop('full_name', None)
+        session.pop('email', None)
+        session.pop('phone', None)
+    return response_text
 
 
 # Single prompt encapsulating the bot's capabilities
@@ -118,13 +143,11 @@ issued to the original form of payment. If customer paid by credit card, the ref
 If customer paid by cash or check, the customer will receive a cash refund.
 
 If customer asks anything about refund, don't throw everything you know at him. Try to narrow his question down and give specific question
-
 """
 
 
 @app.route("/")
 def index():
-    # Clear the session on page load
     session.clear()
     welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
     return render_template("index.html", message=welcome_message)
@@ -135,42 +158,16 @@ def get_bot_response():
     user_text = request.args.get('msg')
 
     if 'order_status' in session:
-        # Handle order status query
-        order_id = user_text
-        if ORDER_ID_PATTERN.match(order_id):
-            order_status = get_order_status(order_id)
-            if order_status:
-                response_text = f"Your order status is: {order_status}."
-            else:
-                response_text = "Sorry, I couldn't find an order with that ID."
-            session.pop('order_status', None)
-        else:
-            response_text = "The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID."
+        response_text = handle_order_status(user_text)
     elif 'contact_info' in session:
-        # Collect contact information
-        if 'full_name' not in session:
-            session['full_name'] = user_text
-            response_text = "Thank you. Please provide your email address."
-        elif 'email' not in session:
-            session['email'] = user_text
-            response_text = "Great. Finally, please provide your phone number."
-        else:
-            session['phone'] = user_text
-            save_contact_info(session['full_name'], session['email'], session['phone'])
-            response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
-            session.pop('contact_info', None)
-            session.pop('full_name', None)
-            session.pop('email', None)
-            session.pop('phone', None)
+        response_text = handle_contact_info(user_text)
     else:
-        # Check if the user wants to switch to a real person
         if is_switch_to_real_person_query(user_text):
             response_text = "I understand your request for real person interaction. Could you please provide your full name first?"
             session['contact_info'] = True
-        # Check if the user is asking about order status
         elif is_order_status_query(user_text):
             response_text = "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?"
-            session['order_status'] = True  # Set the flag to expect an order ID next
+            session['order_status'] = True
         else:
             response_text = common_query(user_text)
 
