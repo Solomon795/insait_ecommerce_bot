@@ -5,15 +5,18 @@ import os
 from dotenv import load_dotenv
 import re
 import logging
+
 # Configure logging
 logging.basicConfig(filename='conversation_history.log', level=logging.INFO, format='%(message)s')
 
+cancellation_note = "If you do not wish to continue with the process, type 'cancel'."
 # Function to log conversation history
 def log_conversation_history(conversation_history):
     with open('conversation_history.log', 'w') as file:
         for entry in conversation_history:
             file.write(f"{entry['role']}: {entry['content']}\n")
         file.write("\n")
+
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
@@ -117,12 +120,19 @@ def handle_order_status(user_text):
 
 
 def handle_contact_info(user_text):
+    if user_text.lower() == 'cancel':
+        session.pop('contact_info', None)
+        session.pop('full_name', None)
+        session.pop('email', None)
+        session.pop('phone', None)
+        return "Certainly. How else can I help you?"
+
     if 'full_name' not in session:
         session['full_name'] = user_text
-        response_text = "Thank you. Please provide your email address."
+        response_text = f"Thank you. Please provide your email address.\n{cancellation_note}"
     elif 'email' not in session:
         session['email'] = user_text
-        response_text = "Great. Finally, please provide your phone number."
+        response_text = f"Great. Finally, please provide your phone number.\n{cancellation_note}"
     else:
         session['phone'] = user_text
         save_contact_info(session['full_name'], session['email'], session['phone'])
@@ -132,6 +142,7 @@ def handle_contact_info(user_text):
         session.pop('email', None)
         session.pop('phone', None)
     return response_text
+
 
 
 # Single prompt encapsulating the bot's capabilities
@@ -162,7 +173,10 @@ def index():
     welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
     return render_template("index.html", message=welcome_message)
 
+
 conversation = []
+
+
 @app.route("/get")
 def get_bot_response():
     user_text = request.args.get('msg')
@@ -171,17 +185,26 @@ def get_bot_response():
     conversation.append({"role": "user", "content": user_text})
 
     if 'order_status' in session:
-        response_text = handle_order_status(user_text)
+        # Check if the user's response is negative
+        if user_text.lower() == 'cancel':
+            response_text = "Understood. How else can I assist you?"
+            session.pop('order_status', None)  # Clear the order status session
+        else:
+            response_text = handle_order_status(user_text)
     elif 'contact_info' in session:
         response_text = handle_contact_info(user_text)
     else:
+        # Check if the user's response is unrelated to the current process
         if is_switch_to_real_person_query(user_text):
-            response_text = "I understand your request for real person interaction. Could you please provide your full name first?"
+            response_text = (f"I understand your request for real person interaction. "
+                             f"Could you please provide your full name first?\n{cancellation_note}")
             session['contact_info'] = True
         elif is_order_status_query(user_text):
-            response_text = "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?"
+            response_text = (f"Could you please provide your order ID "
+                             f"in the following format: XXX-XXXXXXX (all digits)?\n{cancellation_note}")
             session['order_status'] = True
         else:
+            # Handle completely different questions here
             response_text = common_query(user_text)
 
     # Append chatbot's response to the conversation
@@ -189,6 +212,7 @@ def get_bot_response():
     log_conversation_history(conversation)
 
     return response_text
+
 
 
 if __name__ == "__main__":

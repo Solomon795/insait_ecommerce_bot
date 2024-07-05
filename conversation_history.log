@@ -1,6 +1,30 @@
-user: Hey there who are yo
-assistant: Hello! I am an e-commerce support bot here to assist you with any questions you have about products, orders, or policies. How can I help you today?
-user: Are you sure you are
-assistant: I'm here and ready to assist you with any questions or concerns you may have regarding products, orders, or policies. How can I help you today?
+user: Hi
+assistant: Hello! How can I assist you today with your e-commerce-related query?
+user: How are you
+assistant: I'm an AI designed to assist you with any queries you may have about products, orders, or policies. How can I help you today?
+user: What you represent
+assistant: I am an e-commerce support bot here to assist you with any questions you have regarding products, orders, or policies. How can I help you today?
+user: If i give you order number can you help me understand what happened to it
+assistant: Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?
+If you do not wish to continue with the process, type 'cancel'.
+user: cancel
+assistant: Understood. How else can I assist you?
+user: Can you bring me the tea
+assistant: I'm here to assist you with queries related to products, orders, and policies. Could you please provide more details or let me know how I can assist you with your request?
+user: can you switch to human
+assistant: I understand your request for real person interaction. Could you please provide your full name first?
+If you do not wish to continue with the process, type 'cancel'.
+user: sol
+assistant: Thank you. Please provide your email address.
+If you do not wish to continue with the process, type 'cancel'.
+user: cancel
+assistant: Certainly. How else can I help you?
+user: order status
+assistant: Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?
+If you do not wish to continue with the process, type 'cancel'.
+user: 33-333
+assistant: The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID.
+user: cancel
+assistant: Understood. How else can I assist you?
 
-127.0.0.1 - - [05/Jul/2024 19:41:19] "GET /get?msg=Are%20you%20sure%20you%20are HTTP/1.1" 200 -
+127.0.0.1 - - [05/Jul/2024 20:12:10] "GET /get?msg=cancel HTTP/1.1" 200 -
