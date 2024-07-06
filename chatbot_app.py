@@ -135,6 +135,13 @@ def save_contact_info(full_name, email, phone):
             writer.writeheader()
         writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
 
+def is_valid_email(email):
+    # Basic email validation regex
+    return re.match(r"[^@]+@[^@]+\.[^@]+", email) is not None
+
+def is_valid_phone(phone):
+    # Basic phone number validation (10 digits)
+    return re.match(r"^\d{10}$", phone) is not None
 
 def handle_order_status(user_text):
     order_id = user_text
@@ -169,16 +176,22 @@ def handle_contact_info(user_text):
         session['full_name'] = user_text
         response_text = f"Thank you. Please provide your email address.\n{cancellation_note}"
     elif 'email' not in session:
-        session['email'] = user_text
-        response_text = f"Great. Finally, please provide your phone number.\n{cancellation_note}"
+        if not is_valid_email(user_text):
+            response_text = f"The email address '{user_text}' is not valid. Please provide a valid email address.\n{cancellation_note}"
+        else:
+            session['email'] = user_text
+            response_text = f"Great. Finally, please provide your phone number.\n{cancellation_note}"
     else:
-        session['phone'] = user_text
-        save_contact_info(session['full_name'], session['email'], session['phone'])
-        response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
-        session.pop('contact_info', None)
-        session.pop('full_name', None)
-        session.pop('email', None)
-        session.pop('phone', None)
+        if not is_valid_phone(user_text):
+            response_text = f"The phone number '{user_text}' is not valid. Please provide a valid 10-digit phone number.\n{cancellation_note}"
+        else:
+            session['phone'] = user_text
+            save_contact_info(session['full_name'], session['email'], session['phone'])
+            response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
+            session.pop('contact_info', None)
+            session.pop('full_name', None)
+            session.pop('email', None)
+            session.pop('phone', None)
     return response_text
 
 
