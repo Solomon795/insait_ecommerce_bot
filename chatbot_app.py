@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, abort
 import openai
 import csv
 import os
@@ -47,12 +47,20 @@ def common_query(user_text):
 
 
 def get_order_status(order_id):
-    with open('ecommerce_orders.csv', mode='r') as file:
-        csv_reader = csv.DictReader(file)
-        for row in csv_reader:
-            if row['order_id'] == order_id:
-                return row['status']
-    return None
+    try:
+        with open('ecommerce_orders.csv', mode='r') as file:
+            csv_reader = csv.DictReader(file)
+            if 'order_id' not in csv_reader.fieldnames or 'status' not in csv_reader.fieldnames:
+                raise KeyError("missing column")
+            for row in csv_reader:
+                if row['order_id'] == order_id:
+                    return row['status']
+    except FileNotFoundError:
+        return "Error: Orders file not found"
+    except csv.Error:
+        return "Error: error reading orders file"
+    except KeyError:
+        return "Error: Missing either 'order_id' or 'status' column (or both), check your csv orders database"
 
 
 def is_order_status_query(user_text):
@@ -110,7 +118,11 @@ def handle_order_status(user_text):
     if ORDER_ID_PATTERN.match(order_id):
         order_status = get_order_status(order_id)
         if order_status:
-            response_text = f"Your order status is: {order_status}."
+            if "Error" in order_status:
+                session.pop('order_status', None)
+                return order_status
+            else:
+                response_text = f"Your order status is: {order_status}."
         else:
             response_text = "Sorry, I couldn't find an order with that ID."
         session.pop('order_status', None)
