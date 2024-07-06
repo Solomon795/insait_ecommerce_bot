@@ -37,12 +37,15 @@ def common_query(user_text):
         {"role": "user", "content": user_text}
     ]
 
-    response = client.chat.completions.create(
-        messages=conversation,
-        model="gpt-3.5-turbo"
-    )
+    try:
+        response = client.chat.completions.create(
+            messages=conversation,
+            model="gpt-3.5-turbo"
+        )
+        response_text = response.choices[0].message.content.strip()
+    except openai.APIConnectionError:
+        response_text = "I'm currently experiencing connection issues. Please try again later."
 
-    response_text = response.choices[0].message.content.strip()
     return response_text
 
 
@@ -66,63 +69,77 @@ def get_order_status(order_id):
 
 
 def is_order_status_query(user_text):
-    response = client.chat.completions.create(
-        messages=[
-            {
-                "role": "assistant",
-                "content": "You are an e-commerce support bot. "
-                           "Answer with 'yes' if user asks about checking order status specifically"
-                           "(understand it from context and sentiment), otherwise answer with 'no'."
-            },
-            {
-                "role": "user",
-                "content": user_text
-            }
-        ],
-        model="gpt-3.5-turbo"
-    )
-    intent = response.choices[0].message.content.strip().lower()
+    try:
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "assistant",
+                    "content": "You are an e-commerce support bot. "
+                               "Answer with 'yes' if user asks about checking order status specifically"
+                               "(understand it from context and sentiment), otherwise answer with 'no'."
+                },
+                {
+                    "role": "user",
+                    "content": user_text
+                }
+            ],
+            model="gpt-3.5-turbo"
+        )
+        intent = response.choices[0].message.content.strip().lower()
+    except openai.APIConnectionError:
+        intent = 'no'
+
     return intent == 'yes'
+
 
 def is_order_status_relevant(user_text):
-    response = client.chat.completions.create(
-        messages=[
-            {
-                "role": "assistant",
-                "content": "You are an e-commerce support bot. Answer with 'yes' if order status retrieved is relevant. "
-                           "100% relevant are statuses: Cancelled, Delivered, Shipped, On-hold, Confirmed, Packaging."
-                           "If order status is empty or doesn't make sense in terms of understanding what is whith the order,"
-                           "consists of random characters, etc, answer with 'no'."
-            },
-            {
-                "role": "user",
-                "content": user_text
-            }
-        ],
-        model="gpt-3.5-turbo"
-    )
-    intent = response.choices[0].message.content.strip().lower()
+    try:
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "assistant",
+                    "content": "You are an e-commerce support bot. Answer with 'yes' if order status retrieved is relevant. "
+                               "100% relevant are statuses: Cancelled, Delivered, Shipped, On-hold, Confirmed, Packaging."
+                               "If order status is empty or doesn't make sense in terms of understanding what is whith the order,"
+                               "consists of random characters, etc, answer with 'no'."
+                },
+                {
+                    "role": "user",
+                    "content": user_text
+                }
+            ],
+            model="gpt-3.5-turbo"
+        )
+        intent = response.choices[0].message.content.strip().lower()
+    except openai.APIConnectionError:
+        intent = 'no'
+
     return intent == 'yes'
 
+
 def is_switch_to_real_person_query(user_text):
-    response = client.chat.completions.create(
-        messages=[
-            {
-                "role": "assistant",
-                "content": """
-                You are an e-commerce support bot. Your task is to determine if the following query explicitly requests to speak to a human representative or customer support agent. 
-                Consider phrases that directly ask for human assistance, such as "I want to talk to a human" or "Can I speak to a real person?". 
-                General expressions of dissatisfaction or frustration should not be considered as requests to switch to a human unless they explicitly ask for it.
-                Answer with 'yes' if the query explicitly requests a human representative, otherwise answer with 'no'."""
-            },
-            {
-                "role": "user",
-                "content": user_text
-            }
-        ],
-        model="gpt-3.5-turbo"
-    )
-    intent = response.choices[0].message.content.strip().lower()
+    try:
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "assistant",
+                    "content": """
+                    You are an e-commerce support bot. Your task is to determine if the following query explicitly requests to speak to a human representative or customer support agent. 
+                    Consider phrases that directly ask for human assistance, such as "I want to talk to a human" or "Can I speak to a real person?". 
+                    General expressions of dissatisfaction or frustration should not be considered as requests to switch to a human unless they explicitly ask for it.
+                    Answer with 'yes' if the query explicitly requests a human representative, otherwise answer with 'no'."""
+                },
+                {
+                    "role": "user",
+                    "content": user_text
+                }
+            ],
+            model="gpt-3.5-turbo"
+        )
+        intent = response.choices[0].message.content.strip().lower()
+    except openai.APIConnectionError:
+        intent = 'no'
+
     return intent == 'yes'
 
 
