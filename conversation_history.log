@@ -1,4 +1,23 @@
-user: Hey there
-assistant: I'm currently experiencing connection issues. Please try again later.
+user: hey
+assistant: Hello! How can I assist you with your e-commerce-related query today?
+user: call human
+assistant: I understand your request for real person interaction. Could you please provide your full name first?
+If you do not wish to continue with the process, type 'cancel'.
+user: sol
+assistant: Thank you. Please provide your email address.
+If you do not wish to continue with the process, type 'cancel'.
+user: fwf@dsfs
+assistant: The email address 'fwf@dsfs' is not valid. Please provide a valid email address.
+If you do not wish to continue with the process, type 'cancel'.
+user: qrqr@dsfs.com
+assistant: Great. Finally, please provide your phone number.
+If you do not wish to continue with the process, type 'cancel'.
+user: 1234567890
+assistant: Error: Permission denied while trying to write contact information.
+Probablythe csv file for saving contact info is open now. Please close it if so and try again later.
+user: and
+assistant: Hello! How can I assist you today?
+user: what kind of info can u provide
+assistant: I can provide information on a variety of topics related to products, orders, and policies. If you have any questions about specific products, order status, return policies, or any other inquiries related to your shopping experience, feel free to ask, and I'll do my best to assist you. How may I help you today?
 
-127.0.0.1 - - [06/Jul/2024 16:40:14] "GET /get?msg=Hey%20there HTTP/1.1" 200 -
+127.0.0.1 - - [06/Jul/2024 16:52:54] "GET /get?msg=what%20kind%20of%20info%20can%20u%20provide HTTP/1.1" 200 -

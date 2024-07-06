@@ -145,12 +145,16 @@ def is_switch_to_real_person_query(user_text):
 
 def save_contact_info(full_name, email, phone):
     file_exists = os.path.isfile('contact_info.csv')
-    with open('contact_info.csv', mode='a', newline='') as file:
-        fieldnames = ['full_name', 'email', 'phone']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        if not file_exists:
-            writer.writeheader()
-        writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
+    try:
+        with open('contact_info.csv', mode='a', newline='') as file:
+            fieldnames = ['full_name', 'email', 'phone']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            if not file_exists:
+                writer.writeheader()
+            writer.writerow({'full_name': full_name, 'email': email, 'phone': phone})
+        return 1
+    except PermissionError:
+        return 0
 
 def is_valid_email(email):
     # Basic email validation regex
@@ -203,8 +207,12 @@ def handle_contact_info(user_text):
             response_text = f"The phone number '{user_text}' is not valid. Please provide a valid 10-digit phone number.\n{cancellation_note}"
         else:
             session['phone'] = user_text
-            save_contact_info(session['full_name'], session['email'], session['phone'])
-            response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
+            save_result = save_contact_info(session['full_name'], session['email'], session['phone'])
+            if save_result == 0:
+                response_text = ('Error: Permission denied while trying to write contact information.\nProbably'
+                                 'the csv file for saving contact info is open now. Please close it if so and try '
+                                 'again later.')
+            else: response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
             session.pop('contact_info', None)
             session.pop('full_name', None)
             session.pop('email', None)
