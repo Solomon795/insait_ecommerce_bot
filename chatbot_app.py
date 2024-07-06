@@ -54,6 +54,8 @@ def get_order_status(order_id):
                 raise KeyError("missing column")
             for row in csv_reader:
                 if row['order_id'] == order_id:
+                    if row['status'] == '':
+                        return "empty"
                     return row['status']
     except FileNotFoundError:
         return "Error: Orders file not found"
@@ -68,7 +70,9 @@ def is_order_status_query(user_text):
         messages=[
             {
                 "role": "assistant",
-                "content": "You are an e-commerce support bot. Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
+                "content": "You are an e-commerce support bot. "
+                           "Answer with 'yes' if user asks about checking order status specifically"
+                           "(understand it from context and sentiment), otherwise answer with 'no'."
             },
             {
                 "role": "user",
@@ -85,7 +89,10 @@ def is_order_status_relevant(user_text):
         messages=[
             {
                 "role": "assistant",
-                "content": "You are an e-commerce support bot. Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
+                "content": "You are an e-commerce support bot. Answer with 'yes' if order status retrieved is relevant. "
+                           "100% relevant are statuses: Cancelled, Delivered, Shipped, On-hold, Confirmed, Packaging."
+                           "If order status is empty or doesn't make sense in terms of understanding what is whith the order,"
+                           "consists of random characters, etc, answer with 'no'."
             },
             {
                 "role": "user",
@@ -137,6 +144,9 @@ def handle_order_status(user_text):
             if "Error" in order_status:
                 session.pop('order_status', None)
                 return order_status
+            elif not is_order_status_relevant(order_status) or order_status=='empty':
+                session.pop('order_status', None)
+                return "Order status is empty or unknown"
             else:
                 response_text = f"Your order status is: {order_status}."
         else:

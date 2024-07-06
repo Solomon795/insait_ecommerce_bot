@@ -1,13 +1,24 @@
-user: Hey there
-assistant: Hello! How can I assist you today?
-user: order status
+user: help me
+assistant: Of course! I'm here to help. What specifically do you need assistance with regarding your order, a product, or something else related to our store? Let me know how I can assist you further.
+user: help me
+assistant: Of course! I'm here to assist you. What specific question do you have regarding our products, orders, or policies? Feel free to ask so I can provide you with the information you need.
+user: help me pleasessss
+assistant: Of course! I'm here to help. What do you need assistance with? Please provide me with more details so I can better assist you.
+user: Where 's my goddamn purchas
 assistant: Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?
 If you do not wish to continue with the process, type 'cancel'.
-user: 333
-assistant: The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID.
-user: 333-3333333
-assistant: Error: Missing either 'order_id' or 'status' column (or both), check your csv orders database
-user: and
-assistant: Hello! How can I assist you today regarding your order, return, or any other inquiry you might have?
+user: 407-5633625
+assistant: Your order status is: On-hold.
+user: you know what
+assistant: What can I assist you with today regarding your purchase or order?
+user: you're a fool
+assistant: I'm here to help with any questions you have. How can I assist you today regarding your order, return, refund, or any other inquiries you may have?
+user: My feedback meant i want a live human
+assistant: I understand your request for real person interaction. Could you please provide your full name first?
+If you do not wish to continue with the process, type 'cancel'.
+user: cancel
+assistant: Certainly. How else can I help you?
+user: fucking help just  me
+assistant: I'm here to help! What can I assist you with today?
 
-127.0.0.1 - - [06/Jul/2024 14:48:07] "GET /get?msg=and HTTP/1.1" 200 -
+127.0.0.1 - - [06/Jul/2024 15:24:03] "GET /get?msg=fucking%20help%20just%20%20me HTTP/1.1" 200 -
