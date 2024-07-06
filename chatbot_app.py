@@ -33,7 +33,7 @@ ORDER_ID_PATTERN = re.compile(r'^\d{3}-\d{7}$')
 
 def common_query(user_text):
     conversation = [
-        {"role": "system", "content": bot_prompt},
+        {"role": "assistant", "content": bot_prompt},
         {"role": "user", "content": user_text}
     ]
 
@@ -67,7 +67,7 @@ def is_order_status_query(user_text):
     response = client.chat.completions.create(
         messages=[
             {
-                "role": "system",
+                "role": "assistant",
                 "content": "You are an e-commerce support bot. Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
             },
             {
@@ -80,12 +80,28 @@ def is_order_status_query(user_text):
     intent = response.choices[0].message.content.strip().lower()
     return intent == 'yes'
 
+def is_order_status_relevant(user_text):
+    response = client.chat.completions.create(
+        messages=[
+            {
+                "role": "assistant",
+                "content": "You are an e-commerce support bot. Answer with 'yes' if user asks about checking order status (understand it from context), otherwise answer with 'no'."
+            },
+            {
+                "role": "user",
+                "content": user_text
+            }
+        ],
+        model="gpt-3.5-turbo"
+    )
+    intent = response.choices[0].message.content.strip().lower()
+    return intent == 'yes'
 
 def is_switch_to_real_person_query(user_text):
     response = client.chat.completions.create(
         messages=[
             {
-                "role": "system",
+                "role": "assistant",
                 "content": """
                 You are an e-commerce support bot. Your task is to determine if the following query explicitly requests to speak to a human representative or customer support agent. 
                 Consider phrases that directly ask for human assistance, such as "I want to talk to a human" or "Can I speak to a real person?". 
