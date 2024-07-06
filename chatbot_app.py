@@ -9,13 +9,41 @@ import logging
 # Configure logging
 logging.basicConfig(filename='conversation_history.log', level=logging.INFO, format='%(message)s')
 
+BOT_WELCOME = "Welcome to E-Commerce Support Bot! How can I assist you today?"
 CANCELLATION_NOTE = "If you do not wish to continue with the process, type 'cancel'."
+ASSIST_AFTER_CANCEL = "Certainly. How else can I help you?"
 
 CONVERSATION_HISTORY = []
 
-IS_ORDER_STATUS_REQUEST_PROMPT = "You are an e-commerce support bot. " \
-                                 "Answer with 'yes' if user asks about checking order status specifically" \
-                                 "(understand it from context and sentiment), otherwise answer with 'no'."
+ERROR_FILE_NOT_FOUND = "Error: Orders file not found"
+ERROR_CSV = "Error: error reading orders file"
+ERROR_MISSING_COLUMN = "Error: Missing either 'order_id' or 'status' column (or both), check your csv orders database"
+ERROR_CSV_SAVE_CONTACT_OPEN = ("Error: Permission denied while trying to write contact information.\nProbably"
+                               "the csv file for saving contact info is open now. Please close it if so and try "
+                               "again later.")
+
+NO_INTERNET_ERROR = ("I'm currently experiencing connection issues. "
+                     "Please try again later.")
+
+ORDER_ID_INQUIRY = ("Could you please provide your order ID in "
+                    "the following format: XXX-XXXXXXX (all digits)?")
+ORDER_NOT_FOUND = "Sorry, I couldn't find an order with that ID."
+ORDER_WRONG_PATTERN = "The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID."
+ORDER_STATUS_UNKNOWN = "Order status is empty or unknown"
+
+
+
+SWITCH_TO_REP_RESP_START = ("I understand your request for real person interaction. "
+                            "Could you please provide your full name first?")
+SWITCH_TO_REP_PROVIDE_EMAIL = "Thank you. Please provide your email address."
+SWITCH_TO_REP_PROVIDE_PHONE = "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."
+CONTACT_INFO_SAVED_MSG = "Thank you! Your information has been saved. A representative will contact you shortly."
+
+
+IS_ORDER_STATUS_REQUEST_PROMPT = ("You are an e-commerce support bot. "
+                                  "Answer with 'yes' if user asks about checking order status specifically "
+                                  "understand it from context and sentiment, but the user text should "
+                                  "contain something about order or purchased items), otherwise answer with 'no'.")
 
 IS_ORDER_STATUS_RELEVANT_PROMPT = ("You are an e-commerce support bot. Answer with 'yes' if order status retrieved is "
                                    "relevant."
@@ -52,6 +80,8 @@ If customer asks anything about refund, don't throw everything you know at him. 
 """
 
 
+
+
 # Function to log conversation history
 def log_conversation_history(conversation_history):
     with open('conversation_history.log', 'w') as file:
@@ -62,10 +92,11 @@ def log_conversation_history(conversation_history):
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
+secret_key = os.getenv('SECRET_KEY')
 
 app = Flask(__name__)
 
-app.secret_key = 'solomon_insait'
+app.secret_key = secret_key
 
 client = openai.OpenAI(api_key=api_key)
 
@@ -86,7 +117,7 @@ def common_query(user_text):
         )
         response_text = response.choices[0].message.content.strip()
     except openai.APIConnectionError:
-        response_text = "I'm currently experiencing connection issues. Please try again later."
+        response_text = NO_INTERNET_ERROR
 
     return response_text
 
@@ -119,11 +150,11 @@ def get_order_status(order_id):
                         return "empty"
                     return row['status']
     except FileNotFoundError:
-        return "Error: Orders file not found"
+        return ERROR_FILE_NOT_FOUND
     except csv.Error:
-        return "Error: error reading orders file"
+        return ERROR_CSV
     except KeyError:
-        return "Error: Missing either 'order_id' or 'status' column (or both), check your csv orders database"
+        return ERROR_MISSING_COLUMN
 
 
 
@@ -161,34 +192,36 @@ def handle_order_status(user_text):
                 return order_status
             elif not is_query_type(order_status, IS_ORDER_STATUS_RELEVANT_PROMPT) or order_status == 'empty':
                 session.pop('order_status', None)
-                return "Order status is empty or unknown"
+                return ORDER_STATUS_UNKNOWN
             else:
                 response_text = f"Your order status is: {order_status}."
         else:
-            response_text = "Sorry, I couldn't find an order with that ID."
+            response_text = ORDER_NOT_FOUND
         session.pop('order_status', None)
     else:
-        response_text = "The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID."
+        response_text = ORDER_WRONG_PATTERN
     return response_text
 
+def clear_switch_to_human_session():
+    session.pop('contact_info', None)
+    session.pop('full_name', None)
+    session.pop('email', None)
+    session.pop('phone', None)
 
 def handle_contact_info(user_text):
     if user_text.lower() == 'cancel':
-        session.pop('contact_info', None)
-        session.pop('full_name', None)
-        session.pop('email', None)
-        session.pop('phone', None)
-        return "Certainly. How else can I help you?"
+        clear_switch_to_human_session()
+        return ASSIST_AFTER_CANCEL
 
     if 'full_name' not in session:
         session['full_name'] = user_text
-        response_text = f"Thank you. Please provide your email address.\n{CANCELLATION_NOTE}"
+        response_text = f"{SWITCH_TO_REP_PROVIDE_EMAIL}\n{CANCELLATION_NOTE}"
     elif 'email' not in session:
         if not is_valid_email(user_text):
             response_text = f"The email address '{user_text}' is not valid. Please provide a valid email address.\n{CANCELLATION_NOTE}"
         else:
             session['email'] = user_text
-            response_text = f"Great. Finally, please provide your phone number.\n{CANCELLATION_NOTE}"
+            response_text = f"{SWITCH_TO_REP_PROVIDE_PHONE}\n{CANCELLATION_NOTE}"
     else:
         if not is_valid_phone(user_text):
             response_text = f"The phone number '{user_text}' is not valid. Please provide a valid 10-digit phone number.\n{CANCELLATION_NOTE}"
@@ -196,22 +229,17 @@ def handle_contact_info(user_text):
             session['phone'] = user_text
             save_result = save_contact_info(session['full_name'], session['email'], session['phone'])
             if save_result == 0:
-                response_text = ('Error: Permission denied while trying to write contact information.\nProbably'
-                                 'the csv file for saving contact info is open now. Please close it if so and try '
-                                 'again later.')
+                response_text = ERROR_CSV_SAVE_CONTACT_OPEN
             else:
-                response_text = "Thank you! Your information has been saved. A representative will contact you shortly."
-            session.pop('contact_info', None)
-            session.pop('full_name', None)
-            session.pop('email', None)
-            session.pop('phone', None)
+                response_text = CONTACT_INFO_SAVED_MSG
+            clear_switch_to_human_session()
     return response_text
 
 
 @app.route("/")
 def index():
     session.clear()
-    welcome_message = "Welcome to E-Commerce Support Bot! How can I assist you today?"
+    welcome_message = BOT_WELCOME
     return render_template("index.html", message=welcome_message)
 
 
@@ -225,7 +253,7 @@ def get_bot_response():
     if 'order_status' in session:
         # Check if the user's response is negative
         if user_text.lower() == 'cancel':
-            response_text = "Understood. How else can I assist you?"
+            response_text = ASSIST_AFTER_CANCEL
             session.pop('order_status', None)  # Clear the order status session
         else:
             response_text = handle_order_status(user_text)
@@ -234,12 +262,10 @@ def get_bot_response():
     else:
         # Check if the user's response is unrelated to the current process
         if is_query_type(user_text, IS_SWITCH_TO_HUMAN_REQUEST_PROMPT):
-            response_text = (f"I understand your request for real person interaction. "
-                             f"Could you please provide your full name first?\n{CANCELLATION_NOTE}")
+            response_text = f"{SWITCH_TO_REP_RESP_START}\n{CANCELLATION_NOTE}"
             session['contact_info'] = True
         elif is_query_type(user_text, IS_ORDER_STATUS_REQUEST_PROMPT):
-            response_text = (f"Could you please provide your order ID "
-                             f"in the following format: XXX-XXXXXXX (all digits)?\n{CANCELLATION_NOTE}")
+            response_text = f"{ORDER_ID_INQUIRY}\n{CANCELLATION_NOTE}"
             session['order_status'] = True
         else:
             response_text = common_query(user_text)
