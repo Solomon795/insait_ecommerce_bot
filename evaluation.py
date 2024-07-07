@@ -12,6 +12,9 @@ total_responses = 0
 url = "http://127.0.0.1:5000/get"
 reset_url = "http://127.0.0.1:5000/reset"
 
+# Create a session object
+s = requests.Session()
+
 # Iterate over the test cases
 for i, test_case in enumerate(test_cases):
     print(f"Processing test case {i + 1}/{len(test_cases)}")
@@ -22,8 +25,8 @@ for i, test_case in enumerate(test_cases):
         if turn['role'] == 'user':
             user_text = turn['content']
             print(f"User: {user_text}")
-            # Make a GET request to the Flask app
-            response = requests.get(url, params={'msg': user_text})
+            # Make a GET request to the Flask app using the session object
+            response = s.get(url, params={'msg': user_text})
             bot_response = response.text.strip()
             print(f"Bot response: {bot_response}")
         # Assistant turn
@@ -39,8 +42,9 @@ for i, test_case in enumerate(test_cases):
             total_responses += 1
 
     # Reset the session after each dialogue
-    requests.get(reset_url)
+    s.get(reset_url)
     print("Session reset\n")
+
 
 # Calculate the accuracy
 accuracy = correct_responses / total_responses if total_responses > 0 else 0

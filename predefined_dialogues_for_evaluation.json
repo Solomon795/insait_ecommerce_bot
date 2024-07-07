@@ -12,7 +12,7 @@
             {"role": "user", "content": "I want to talk to a human."},
             {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "Solomon Elgaev"},
-            {"role": "assistant", "content": "Thank you. Please provide your email address."}
+            {"role": "assistant", "content": "Thank you. Please provide your email address.\nIf you do not wish to continue with the process, type 'cancel'."}
         ]
     },
     {
@@ -20,9 +20,9 @@
             {"role": "user", "content": "I'd like to interact with a live person."},
             {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "John Doe"},
-            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "assistant", "content": "Thank you. Please provide your email address.\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "johndoe@example.com"},
-            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."}
+            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05..\nIf you do not wish to continue with the process, type 'cancel'."}
         ]
     },
     {
@@ -46,7 +46,7 @@
             {"role": "user", "content": "Call a human to this chat."},
             {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "Solio"},
-            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "assistant", "content": "Thank you. Please provide your email address.\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "solio"},
             {"role": "assistant", "content": "The email address 'solio' is not valid. Please provide a valid email address."}
         ]
@@ -56,9 +56,9 @@
             {"role": "user", "content": "I'd like a chat with an alive person."},
             {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "Susanna Elgaeva"},
-            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "assistant", "content": "Thank you. Please provide your email address.\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "susanna@example.com"},
-            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."},
+            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05..\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "0551234"},
             {"role": "assistant", "content": "The phone number '0551234' is not valid. Please provide a valid 10-digit phone number."}
         ]
@@ -104,9 +104,9 @@
             {"role": "user", "content": "I want to SPEAK to a real man or woman."},
             {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "Isaac Jehoshua"},
-            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "assistant", "content": "Thank you. Please provide your email address.\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "isaac@example.com"},
-            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."},
+            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05..\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "0501234567"},
             {"role": "assistant", "content": "Thank you! Your information has been saved. A representative will contact you shortly."}
         ]
