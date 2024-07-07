@@ -48,7 +48,7 @@
             {"role": "user", "content": "Solio"},
             {"role": "assistant", "content": "Thank you. Please provide your email address.\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "solio"},
-            {"role": "assistant", "content": "The email address 'solio' is not valid. Please provide a valid email address."}
+            {"role": "assistant", "content": "The email address 'solio' is not valid. Please provide a valid email address.\nIf you do not wish to continue with the process, type 'cancel'."}
         ]
     },
     {
@@ -60,7 +60,7 @@
             {"role": "user", "content": "susanna@example.com"},
             {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05..\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "0551234"},
-            {"role": "assistant", "content": "The phone number '0551234' is not valid. Please provide a valid 10-digit phone number."}
+            {"role": "assistant", "content": "The phone number '0551234' is not valid. Please provide a valid 10-digit phone number.\nIf you do not wish to continue with the process, type 'cancel'."}
         ]
     },
     {
@@ -81,8 +81,8 @@
     },
     {
         "dialogue": [
-            {"role": "user", "content": "What is the return policy?"},
-            {"role": "assistant", "content": "Return policy for items purchased at the store is that customer can return most items within 30 days of purchase for a full refund or exchange. Items must be in their original condition, with all tags and packaging intact. The customer should bring his or her receipt or proof of purchase when returning items. Certain items such as clearance merchandise, perishable goods, and personal care items are non-returnable. Offer the customer to check the product description or to ask a store associate for more details if he or she has doubts."}
+            {"role": "user", "content": "How many days can pass since the purchase so that I can still return it. Give me only number"},
+            {"role": "assistant", "content": "30"}
         ]
     },
     {
@@ -93,10 +93,10 @@
     },
     {
         "dialogue": [
-            {"role": "user", "content": "How to track items that I bought at your store?"},
+            {"role": "user", "content": "How to learn about items I bought at the store?"},
             {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "403-9615377"},
-            {"role": "assistant", "content": "Order status is empty or unknown."}
+            {"role": "assistant", "content": "Order status is empty or unknown"}
         ]
     },
     {
@@ -121,7 +121,7 @@
     },
     {
         "dialogue": [
-            {"role": "user", "content": "I want to learn about my goods?"},
+            {"role": "user", "content": "I want to learn about my purchased goods"},
             {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
             {"role": "user", "content": "408-1298370"},
             {"role": "assistant", "content": "Your order status is: On-hold."}
@@ -138,12 +138,12 @@
     {
         "dialogue": [
             {"role": "user", "content": "What is your return policy?"},
-            {"role": "assistant", "content": "Return policy for items purchased at the store is that customer can return most items within 30 days of purchase for a full refund or exchange. Items must be in their original condition, with all tags and packaging intact. The customer should bring his or her receipt or proof of purchase when returning items. Certain items such as clearance merchandise, perishable goods, and personal care items are non-returnable. Offer the customer to check the product description or to ask a store associate for more details if he or she has doubts."}
+            {"role": "assistant", "content": "The return policy for items purchased at the store is that you can return most items within 30 days of purchase for a full refund or exchange. Items must be in their original condition, with all tags and packaging intact. Remember to bring your receipt or proof of purchase when returning items. Certain items, such as clearance merchandise, perishable goods, and personal care items, are non-returnable. If you have specific questions about a particular item, you can check the product description or ask a store associate for more details."}
         ]
     },
     {
         "dialogue": [
-            {"role": "user", "content": "Can I return a clearance item? Answer either 'yes' or 'no'"},
+            {"role": "user", "content": "Can I return a clearance item? Answer either 'yes' or 'no' - mind the case"},
             {"role": "assistant", "content": "no"}
         ]
     }
