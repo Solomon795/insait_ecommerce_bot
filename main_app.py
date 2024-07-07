@@ -35,7 +35,7 @@ def index():
     welcome_message = bot.config['DEFAULT']['BOT_WELCOME']
     return render_template("index.html", message=welcome_message)
 
-@app.route("/get")
+@app.route("/get", methods=['GET', 'POST'])
 def get_bot_response():
     user_text = request.args.get('msg')
     global CONVERSATION_HISTORY
