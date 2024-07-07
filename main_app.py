@@ -7,7 +7,7 @@ import configparser
 
 # Configure logging
 logging.basicConfig(filename='conversation_history.log', level=logging.INFO, format='%(message)s')
-CONVERSATION_HISTORY = []
+
 
 # Load configurations from config.ini
 config = configparser.ConfigParser()
@@ -28,6 +28,7 @@ app = Flask(__name__)
 app.secret_key = secret_key
 
 bot = ECommerceSupportBot(api_key=api_key, config=config)
+CONVERSATION_HISTORY = [{"role": "assistant", "content": bot.config['DEFAULT']['BOT_PROMPT']}]
 
 @app.route("/")
 def index():
@@ -38,6 +39,7 @@ def index():
 @app.route("/get", methods=['GET', 'POST'])
 def get_bot_response():
     user_text = request.args.get('msg')
+
     global CONVERSATION_HISTORY
     # Append user's message to the conversation
     CONVERSATION_HISTORY.append({"role": "user", "content": user_text})
@@ -61,13 +63,19 @@ def get_bot_response():
             response_text = f"{bot.config['ORDER_STATUS_STREAM']['ORDER_ID_INQUIRY']}\n{bot.config['DEFAULT']['CANCELLATION_NOTE']}"
             session['order_status'] = True
         else:
-            response_text = bot.common_query(user_text)
+            response_text = bot.common_query(user_text, CONVERSATION_HISTORY)
+
 
     # Append chatbot's response to the conversation
     CONVERSATION_HISTORY.append({"role": "assistant", "content": response_text})
     log_conversation_history(CONVERSATION_HISTORY)
 
     return response_text
+
+@app.route("/reset", methods=['GET'])
+def reset():
+    session.clear()
+    return "Session reset."
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,150 @@
+[
+    {
+        "dialogue": [
+            {"role": "user", "content": "What is the status of my order?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "405-8078784"},
+            {"role": "assistant", "content": "Your order status is: Cancelled."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "I want to talk to a human."},
+            {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "Solomon Elgaev"},
+            {"role": "assistant", "content": "Thank you. Please provide your email address."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "I'd like to interact with a live person."},
+            {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "John Doe"},
+            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "user", "content": "johndoe@example.com"},
+            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Where are my purchased items?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "123-4567890"},
+            {"role": "assistant", "content": "Sorry, I couldn't find an order with that ID."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Could you help me with my order?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "123-45678"},
+            {"role": "assistant", "content": "The order ID should be in the format XXX-XXXXXXX. Please provide a valid order ID."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Call a human to this chat."},
+            {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "Solio"},
+            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "user", "content": "solio"},
+            {"role": "assistant", "content": "The email address 'solio' is not valid. Please provide a valid email address."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "I'd like a chat with an alive person."},
+            {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "Susanna Elgaeva"},
+            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "user", "content": "susanna@example.com"},
+            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."},
+            {"role": "user", "content": "0551234"},
+            {"role": "assistant", "content": "The phone number '0551234' is not valid. Please provide a valid 10-digit phone number."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "I want to know what happened to my order?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "cancel"},
+            {"role": "assistant", "content": "Certainly. How else can I help you?"}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Switch to human associate."},
+            {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "cancel"},
+            {"role": "assistant", "content": "Certainly. How else can I help you?"}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "What is the return policy?"},
+            {"role": "assistant", "content": "Return policy for items purchased at the store is that customer can return most items within 30 days of purchase for a full refund or exchange. Items must be in their original condition, with all tags and packaging intact. The customer should bring his or her receipt or proof of purchase when returning items. Certain items such as clearance merchandise, perishable goods, and personal care items are non-returnable. Offer the customer to check the product description or to ask a store associate for more details if he or she has doubts."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "How do I get a refund?"},
+            {"role": "assistant", "content": "Refunds will be issued to the original form of payment. If customer paid by credit card, the refund will be credited to customer's card. If customer paid by cash or check, the customer will receive a cash refund."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "How to track items that I bought at your store?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "403-9615377"},
+            {"role": "assistant", "content": "Order status is empty or unknown."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "I want to SPEAK to a real man or woman."},
+            {"role": "assistant", "content": "I understand your request for real person interaction. Could you please provide your full name first?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "Isaac Jehoshua"},
+            {"role": "assistant", "content": "Thank you. Please provide your email address."},
+            {"role": "user", "content": "isaac@example.com"},
+            {"role": "assistant", "content": "Great. Finally, please provide your phone number. It should contain 10 digits only, starting with 05.."},
+            {"role": "user", "content": "0501234567"},
+            {"role": "assistant", "content": "Thank you! Your information has been saved. A representative will contact you shortly."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "What have you done with my purchase?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "408-7955685"},
+            {"role": "assistant", "content": "Your order status is: Shipped."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "I want to learn about my goods?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "408-1298370"},
+            {"role": "assistant", "content": "Your order status is: On-hold."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Can you help me, i have an order inquiry?"},
+            {"role": "assistant", "content": "Could you please provide your order ID in the following format: XXX-XXXXXXX (all digits)?\nIf you do not wish to continue with the process, type 'cancel'."},
+            {"role": "user", "content": "405-9013803"},
+            {"role": "assistant", "content": "Your order status is: Confirmed."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "What is your return policy?"},
+            {"role": "assistant", "content": "Return policy for items purchased at the store is that customer can return most items within 30 days of purchase for a full refund or exchange. Items must be in their original condition, with all tags and packaging intact. The customer should bring his or her receipt or proof of purchase when returning items. Certain items such as clearance merchandise, perishable goods, and personal care items are non-returnable. Offer the customer to check the product description or to ask a store associate for more details if he or she has doubts."}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Can I return a clearance item? Answer either 'yes' or 'no'"},
+            {"role": "assistant", "content": "no"}
+        ]
+    }
+]
