@@ -1,13 +1,9 @@
 from flask import Flask, render_template, request, session
-import logging
+import datetime
 from dotenv import load_dotenv
 import os
 from ecommerce_bot import ECommerceSupportBot
 import configparser
-
-# Configure logging
-logging.basicConfig(filename='logs/conversation_history.log', level=logging.INFO, format='%(message)s')
-
 
 # Load configurations from config.ini
 config = configparser.ConfigParser()
@@ -15,10 +11,19 @@ config.read('config.ini')
 
 # Function to log conversation history
 def log_conversation_history(conversation_history):
-    with open('logs/conversation_history.log', 'w') as file:
-        for entry in conversation_history:
-            file.write(f"{entry['role']}: {entry['content']}\n")
-        file.write("\n")
+    with open('logs/conversation_history.log', 'a') as file:
+        # Only log the last message in the conversation history
+        last_message = conversation_history[-1]
+        # Get the current time and format it
+        now = datetime.datetime.now()
+        formatted_now = now.strftime('%Y-%m-%d %H:%M')
+        # Log the message with a timestamp
+        file.write(f"{formatted_now}: {last_message['role']}: {last_message['content']}\n")
+        # Add a newline after each assistant message for readability
+        if last_message['role'] == 'assistant':
+            file.write("\n")
+
+
 
 load_dotenv()
 api_key = os.getenv('OPENAI_API_KEY')
@@ -32,7 +37,7 @@ CONVERSATION_HISTORY = [{"role": "assistant", "content": bot.config['DEFAULT']['
 
 @app.route("/")
 def index():
-    session.clear()
+    reset()
     welcome_message = bot.config['DEFAULT']['BOT_WELCOME']
     return render_template("index.html", message=welcome_message)
 
@@ -43,6 +48,7 @@ def get_bot_response():
     global CONVERSATION_HISTORY
     # Append user's message to the conversation
     CONVERSATION_HISTORY.append({"role": "user", "content": user_text})
+    log_conversation_history(CONVERSATION_HISTORY)
 
     if 'order_status' in session:
         # Check if the user's response is negative
@@ -75,6 +81,9 @@ def get_bot_response():
 @app.route("/reset", methods=['GET'])
 def reset():
     session.clear()
+    # Log a separator between sessions
+    with open('logs/conversation_history.log', 'a') as file:
+        file.write("----- New Session -----\n")
     return "Session reset."
 
 if __name__ == "__main__":

@@ -66,6 +66,7 @@ for i, test_case in enumerate(test_cases):
         # Calculate the relevance score
         relevance_score = calculate_relevance(expected_response, bot_response)
         relevance_scores.append(relevance_score)
+        logging.info(f"Relevance Score: {relevance_score:.2f}\n")
 
     # Reset the session after each dialogue
     s.get(reset_url)

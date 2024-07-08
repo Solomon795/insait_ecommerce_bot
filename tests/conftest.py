@@ -1,6 +1,6 @@
 # tests/conftest.py
 import pytest
-from main_app import app as flask_app
+from insait_main_app import app as flask_app
 
 @pytest.fixture
 def app():
