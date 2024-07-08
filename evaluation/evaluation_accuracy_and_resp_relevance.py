@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Configure logging
-logging.basicConfig(filename='logs/evaluation.log', level=logging.INFO, format='%(message)s')
+logging.basicConfig(filename='../logs/evaluation_accuracy_and_resp_relevance.log', level=logging.INFO, format='%(message)s')
 
 # Load the test cases
 with open('predefined_dialogues_for_evaluation.json', 'r') as file:
