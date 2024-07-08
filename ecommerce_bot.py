@@ -21,21 +21,6 @@ class ECommerceSupportBot:
             response_text = self.config['ERRORS']['NO_INTERNET_ERROR']
         return response_text
 
-    # def common_query(self, user_text):
-    #     conversation = [
-    #         {"role": "assistant", "content": self.config['DEFAULT']['BOT_PROMPT']},
-    #         {"role": "user", "content": user_text}
-    #     ]
-    #     try:
-    #         response = self.client.chat.completions.create(
-    #             messages=conversation,
-    #             model="gpt-3.5-turbo"
-    #         )
-    #         response_text = response.choices[0].message.content.strip()
-    #     except openai.APIConnectionError:
-    #         response_text = self.config['ERRORS']['NO_INTERNET_ERROR']
-    #     return response_text
-
     def is_query_type(self, user_text, assistant_prompt):
         try:
             response = self.client.chat.completions.create(

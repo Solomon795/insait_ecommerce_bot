@@ -4,4 +4,4 @@ __pycache__/
 .idea/
 .pytest_cache/
 contact_info.csv
-*.log
+logs/

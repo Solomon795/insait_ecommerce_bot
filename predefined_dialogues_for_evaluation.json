@@ -87,8 +87,8 @@
     },
     {
         "dialogue": [
-            {"role": "user", "content": "How do I get a refund?"},
-            {"role": "assistant", "content": "Refunds will be issued to the original form of payment. If customer paid by credit card, the refund will be credited to customer's card. If customer paid by cash or check, the customer will receive a cash refund."}
+            {"role": "user", "content": "Which credit cards do you accept for payment, enumerate"},
+            {"role": "assistant", "content": "Mastercard, Visa, AMEX, Discovery"}
         ]
     },
     {
@@ -137,14 +137,38 @@
     },
     {
         "dialogue": [
-            {"role": "user", "content": "What is your return policy?"},
-            {"role": "assistant", "content": "The return policy for items purchased at the store is that you can return most items within 30 days of purchase for a full refund or exchange. Items must be in their original condition, with all tags and packaging intact. Remember to bring your receipt or proof of purchase when returning items. Certain items, such as clearance merchandise, perishable goods, and personal care items, are non-returnable. If you have specific questions about a particular item, you can check the product description or ask a store associate for more details."}
+            {"role": "user", "content": "What do I need to bring as proof of purchase when returning items. Answer using single word (noun)."},
+            {"role": "assistant", "content": "Receipt"}
         ]
     },
     {
         "dialogue": [
-            {"role": "user", "content": "Can I return a clearance item? Answer either 'yes' or 'no' - mind the case"},
-            {"role": "assistant", "content": "no"}
+            {"role": "user", "content": "Can I return a clearance item? Answer either 'Yes' or 'No'"},
+            {"role": "assistant", "content": "No"}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "In which condition should be items to be returned? Answer using one adjective"},
+            {"role": "assistant", "content": "Original"}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Can I return clothes? Answer either 'Yes' or 'No'"},
+            {"role": "assistant", "content": "Yes"}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Up to how many days can express shipping be delivered. Give me only number"},
+            {"role": "assistant", "content": "2"}
+        ]
+    },
+    {
+        "dialogue": [
+            {"role": "user", "content": "Up to how many days can standard shipping be delivered. Give me only number"},
+            {"role": "assistant", "content": "5"}
         ]
     }
 ]

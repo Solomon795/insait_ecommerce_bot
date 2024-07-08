@@ -6,7 +6,7 @@ from ecommerce_bot import ECommerceSupportBot
 import configparser
 
 # Configure logging
-logging.basicConfig(filename='conversation_history.log', level=logging.INFO, format='%(message)s')
+logging.basicConfig(filename='logs/conversation_history.log', level=logging.INFO, format='%(message)s')
 
 
 # Load configurations from config.ini
@@ -15,7 +15,7 @@ config.read('config.ini')
 
 # Function to log conversation history
 def log_conversation_history(conversation_history):
-    with open('conversation_history.log', 'w') as file:
+    with open('logs/conversation_history.log', 'w') as file:
         for entry in conversation_history:
             file.write(f"{entry['role']}: {entry['content']}\n")
         file.write("\n")
@@ -78,4 +78,4 @@ def reset():
     return "Session reset."
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
