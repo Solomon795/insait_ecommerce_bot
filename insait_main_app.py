@@ -11,6 +11,14 @@ config.read('config.ini')
 
 # Function to log conversation history
 def log_conversation_history(conversation_history):
+    """
+    Logs the last message in the conversation history to a file with a timestamp.
+
+    Args:
+        conversation_history (list): A list of dictionaries representing the conversation history.
+            Each dictionary should have keys 'role' and 'content'.
+
+    """
     with open('logs/conversation_history.log', 'a') as file:
         # Only log the last message in the conversation history
         last_message = conversation_history[-1]
@@ -37,12 +45,27 @@ CONVERSATION_HISTORY = [{"role": "assistant", "content": bot.config['DEFAULT']['
 
 @app.route("/")
 def index():
+    """
+    Resets the session, logs the beginning of a new session, and renders the index page with a welcome message.
+
+    Returns:
+        str: The rendered HTML content for the index page.
+    """
     reset()
     welcome_message = bot.config['DEFAULT']['BOT_WELCOME']
     return render_template("index.html", message=welcome_message)
 
 @app.route("/get", methods=['GET', 'POST'])
 def get_bot_response():
+    """
+    Handles user input and generates a response from the chatbot.
+
+    The function processes the user input, updates the conversation history,
+    checks for specific session states, and generates an appropriate response.
+
+    Returns:
+        str: The chatbot's response text.
+    """
     user_text = request.args.get('msg')
 
     global CONVERSATION_HISTORY
@@ -80,10 +103,19 @@ def get_bot_response():
 
 @app.route("/reset", methods=['GET'])
 def reset():
+    """
+    Resets the current session, logs the beginning of a new session, and clears the contact info CSV file.
+
+    Returns:
+        str: A confirmation message indicating the session has been reset.
+    """
     session.clear()
     # Log a separator between sessions
     with open('logs/conversation_history.log', 'a') as file:
         file.write("----- New Session -----\n")
+    # Clear contact_info.csv
+    with open('contact_info.csv', 'w') as file:
+        pass
     return "Session reset."
 
 if __name__ == "__main__":
