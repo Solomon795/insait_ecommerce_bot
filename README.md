@@ -41,10 +41,10 @@ The chatbot's performance can be evaluated using predefined dialogues (they shou
     Logs will be stored in ../logs/evaluation_accuracy_and_resp_relevance.log.
 
     7.2 User Satisfaction
-    Analyze user satisfaction from the conversation history log:
+    Analyze user satisfaction from the conversation history log (make sure there is one in 'insait_ecommerce_bot/logs/conversation_history.log', it's the path that hardcoded in script):
 `python analyze_satisfaction.py`
 
-    Logs will be stored in ../logs/evaluation_user_satisfaction.log.
+    Logs will be stored in insait_ecommerce_bot/logs/evaluation_user_satisfaction.log.
 
 ## Functionalities
 1) **Order Status**: When a user asks for the status of an order, the agent requests the order ID and responds with the order status from an orders CSV database.
