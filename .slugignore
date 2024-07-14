@@ -1,5 +1,4 @@
 *.md
 tests/
 .gitignore
-.env
 venv/
