@@ -1,1 +1,0 @@
-web: gunicorn insait_main_app:app
